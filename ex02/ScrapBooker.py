@@ -1,3 +1,4 @@
+import array
 import numpy as np
 
 class ScrapBooker:
@@ -50,17 +51,17 @@ class ScrapBooker:
         This function should not raise any Exception.
         """
         shape = array.shape
-        if axis == 0:
-            if n > shape[0]:
+
+        if axis == 0 and n > shape[0]:
+             return None
+        if n > shape[1] and axis:
                 return None
-            new_array = array[:shape[0]-n,::]
-        elif axis == 1:
-            if n > shape[1]:
-                return None
-            new_array = array[::, :shape[1]-n]git
-        else:
-            return None
-        return new_array
+        indices: np.ndarray[np.int_] = np.arange(shape[axis]) #recup toute la colonne cible par axis
+        mask: np.ndarray[np.bool_] = (indices + 1) % n != 0 #stock toutes les valeurs qui ontt le res de l op != 0
+
+        new_arr: np.ndarray = array[mask, :] if axis == 0 else array[:, mask]
+
+        return new_arr
     def juxtapose(self, array, n, axis):
         """
         Juxtaposes n copies of the image along the specified axis.
@@ -77,8 +78,19 @@ class ScrapBooker:
         -------
         This function should not raise any Exception.
         """
+        if n < 0:
+             return None
+        if axis != 0 and axis != 1:
+             return None
+        new_array = array
+        for i in range(n):
+            new_array = np.concatenate((new_array, array), axis=axis)
+        return new_array
+    
+
+
     def mosaic(self, array, dim):
-         """
+        """
         Makes a grid with multiple copies of the array. The dim argument specifies
         the number of repetition along each dimensions.
         Args:
@@ -93,3 +105,8 @@ class ScrapBooker:
         -------
         This function should not raise any Exception.
         """
+        new_array: np.ndarray = array
+        for i in range(2):  # 0=vertical, 1=horizontal
+            new_array = self.juxtapose(new_array, dim[i], i)
+        return new_array
+         

@@ -1,5 +1,8 @@
+import matplotlib.pyplot as plt
+import numpy as np
+
 class ColorFilter:
-    def invert(self, array):
+    def invert(self, array:np.ndarray):
         """
         Inverts the color of the image received as a numpy array.
         Args:
@@ -13,6 +16,8 @@ class ColorFilter:
         -------
         This function should not raise any Exception.
         """
+        return 1.0 - array.copy()
+
         #Authorized functions: .copy
         #Authorized operators: +,-,=
 
@@ -32,7 +37,13 @@ class ColorFilter:
         -------
         This function should not raise any Exception.
         """
-
+        new = np.zeros(shape=array.shape, dtype=array.dtype)
+        for i in range(array.shape[2]):
+            if i == 2:
+                new[:, :, i] = array[:, :, i] * 1.0 
+            else:
+                new[:, :, i] = array[:, :, i] * 0.2
+        return new
         #Authorized functions: .copy, .zeros,.shape,.dstack
         #Authorized operators: =
 
@@ -53,6 +64,13 @@ class ColorFilter:
         """
         #Authorized functions: .copy
         #Authorized operators: *, =
+        new = np.copy(array)
+        for i in range(array.shape[2]):
+            if i == 1:
+                new[:, :, i] = array[:, :, i] * 1.0
+            else:
+                new[:, :, i] = array[:, :, i] * 0.2
+        return new
 
     def to_red(self, array):
         """
@@ -70,6 +88,13 @@ class ColorFilter:
         """
         #Authorized functions: .copy, .to_green,.to_blue
         #Authorized operators: -,+, =
+        new = np.copy(array)
+        for i in range(array.shape[2]):
+            if i == 0:
+                new[:, :, i] = array[:, :, i] * 1.0
+            else:
+                new[:, :, i] = array[:, :, i] * 0.2
+        return new
 
 
     def to_celluloid(self, array):
@@ -93,6 +118,18 @@ class ColorFilter:
         """
         #Authorized functions: .copy, .arange,.linspace, .min, .max
         #Authorized operators: =, <=, >, & (or and)
+        new = np.copy(array)
+        states = np.linspace(0, 1, 5)# -> [0, 0.25, 0.5, 0.75, 1]
+        shades = np.linspace(0, 1, 4)
+
+        for i in range(3):
+            r_g_b = new[:, :, i]
+            for j in range(len(states) - 1):
+                mask = (r_g_b >= states[j]) & (r_g_b < states[j + 1])
+                r_g_b[mask] = shades[j]
+            new[:, :, i] = r_g_b
+                    
+        return new
 
 
     def to_grayscale(self, array, filter, **kwargs):
@@ -116,3 +153,17 @@ class ColorFilter:
         """
         #Authorized functions: .sum,.shape,.reshape,.broadcast_to,.as_type
         #Authorized operators: *,/, =
+        img = array.astype(np.float32)
+
+        if filter.lower() in ('mean', 'm'):
+            grey = img.sum(axis=2) / 3
+
+        elif filter.lower() in ('weight', 'w'):
+            r = kwargs.get('r', 0.299)
+            g = kwargs.get('g', 0.587)
+            b = kwargs.get('b', 0.114)
+            grey = img[:, :, 0] * r + img[:, :, 1] * g + img[:, :, 2] * b
+
+        grey_rgb = np.broadcast_to(grey[:, :, None], img.shape)
+
+        return grey_rgb

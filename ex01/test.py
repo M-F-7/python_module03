@@ -1,6 +1,6 @@
 from ImageProcessor import ImageProcessor
 imp = ImageProcessor()
-arr = imp.load("non_existing_file.png")
+# arr = imp.load("non_existing_file.png")
 # Output :
 # Exception: FileNotFoundError -- strerror: No such file or directory
 # print(arr)

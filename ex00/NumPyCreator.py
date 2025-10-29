@@ -1,3 +1,4 @@
+from typing import Iterable
 import numpy as np
 import struct 
 
@@ -8,28 +9,24 @@ class NumPyCreator:
         pass
 
 
-    def from_list(self, lst, **kwargs):
-        # buffer = np.array(lst, dtype=object)
-        # return np.ndarray(shape=buffer.size, buffer=buffer, dtype=dtype)
-        print(dtype)
-        lst = [item for sublist in lst for item in sublist]
-        buffer = struct.pack('i'*len(lst), *lst)
-        return np.ndarray(shape=(len(lst),), buffer=buffer, dtype=dtype)
-        # return np.ndarray(shape=(len(lst),), buffer=bytes(np.frombuffer(lst, dtype=dtype)), dtype=dtype)
-        # return np.array(lst, dtype=object)
+    def from_list(self, lst, dtype=None):
+        # lst = [item for sublist in lst for item in sublist]
+        # buffer = struct.pack('i'*len(lst), *lst)
+        # BAS NIVEAU # return np.ndarray(shape=(len(lst),), buffer=buffer, dtype=dtype)
+        return np.array(lst, dtype=object) if isinstance(lst, list) else None
 
     def from_tuple(self, tpl, dtype=None):
-        pass
+        return np.array(tpl, dtype=object) if isinstance(tpl, tuple) else None
 
     def from_iterable(self, itr, dtype=None):
-        pass
+        return np.array(itr, dtype=object) if isinstance(itr, Iterable) else None
 
-    def from_shape(self, shape, value, dtype=None):
-        pass
+    def from_shape(self, shape, value=0, dtype=None):
+        return np.array([[value for _ in range(shape[1])]for _ in range(shape[0])], dtype=object)
 
     def random(self, shape, dtype=None):
-        pass
+        return np.array([[np.random.rand() for _ in range(shape[1])]for _ in range(shape[0])], dtype=object)
 
     def identity(self, n, dtype=None):
-        pass
+        return np.array([[1 if a == b else 0 for a in range(n)]for b in range(n)], dtype=object)
 

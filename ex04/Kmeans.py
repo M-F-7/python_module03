@@ -13,7 +13,7 @@ class KmeansClustering:
         self.centroids = np.zeros((self.ncentroid, X.shape[1]))
         for i in range(self.ncentroid):
             self.centroids[i] = np.random.rand(X.shape[1])
-        print(self.centroids)
+        # print(self.centroids)
         # print("END")
         # print(X.shape[1])
         
@@ -31,6 +31,7 @@ class KmeansClustering:
         -------
         This function should not raise any Exception.
         """
+
     def predict(self, X):
         """
         Predict from wich cluster each datapoint belongs to.
@@ -44,6 +45,7 @@ class KmeansClustering:
         -------
         This function should not raise any Exception.
         """
+
 
 
 
